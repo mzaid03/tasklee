@@ -230,170 +230,253 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900">
-      <div className="mx-auto w-full max-w-3xl px-4 py-10">
-        <header className="flex flex-col gap-2">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight">Task Manager</h1>
-              <p className="text-sm text-zinc-600">Supabase + anonymous guest sessions + RLS</p>
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-gradient-to-r from-cyan-500/30 via-indigo-500/25 to-fuchsia-500/25 blur-3xl" />
+        <div className="absolute -bottom-24 right-[-120px] h-[520px] w-[520px] rounded-full bg-gradient-to-r from-emerald-500/20 via-sky-500/20 to-indigo-500/20 blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(148,163,184,0.12)_1px,transparent_0)] [background-size:22px_22px]" />
+      </div>
+
+      <div className="relative mx-auto w-full max-w-5xl px-4 py-10">
+        <header className="flex flex-col gap-4">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-3">
+              <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-cyan-400/20 via-indigo-400/20 to-fuchsia-400/20 ring-1 ring-white/10">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-cyan-300">
+                  <path
+                    d="M9 6h11M9 12h11M9 18h11"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M4.5 6.5l.7.7 1.8-1.9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M4.5 12.5l.7.7 1.8-1.9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M4.5 18.5l.7.7 1.8-1.9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight">Task Manager</h1>
+                <p className="text-sm text-slate-300">Supabase + anonymous guest sessions + RLS</p>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={handleNewGuest}
-              className="rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
-              disabled={loadingAuth}
-              title="Sign out and create a new guest session"
-            >
-              New guest
-            </button>
+
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+              <div className="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-white/10 sm:justify-start">
+                <span className="text-xs text-slate-300">Session</span>
+                <span className="text-xs text-slate-200">
+                  {loadingAuth ? (
+                    <span className="text-slate-300">Creating…</span>
+                  ) : userId ? (
+                    <span>
+                      {mode === 'demo' ? 'Demo' : 'Guest'} <span className="font-mono">{shortId(userId)}</span>
+                    </span>
+                  ) : (
+                    <span className="text-slate-300">None</span>
+                  )}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleNewGuest}
+                className="inline-flex items-center justify-center rounded-xl bg-white/10 px-4 py-2 text-sm font-medium text-slate-100 ring-1 ring-white/10 transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={loadingAuth}
+                title="Sign out and create a new guest session"
+              >
+                New guest
+              </button>
+            </div>
           </div>
 
-          <div className="text-xs text-zinc-600">
-            {loadingAuth ? (
-              <span>Creating guest session…</span>
-            ) : userId ? (
-              <span>
-                {mode === 'demo' ? 'Demo user' : 'Guest user'}:{' '}
-                <span className="font-mono">{shortId(userId)}</span>
-              </span>
-            ) : (
-              <span>Not signed in.</span>
-            )}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">
+              Total: <span className="font-semibold text-white">{tasks.length}</span>
+            </span>
+            <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">
+              Completed:{' '}
+              <span className="font-semibold text-white">{tasks.filter((t) => t.is_complete).length}</span>
+            </span>
+            <span className="rounded-full bg-gradient-to-r from-cyan-500/15 to-indigo-500/15 px-3 py-1 text-xs text-cyan-100 ring-1 ring-white/10">
+              Techy UI mode
+            </span>
           </div>
         </header>
 
         {mode === 'demo' && !IS_PRODUCTION ? (
-          <div className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            <strong>Demo mode:</strong> Supabase isn’t configured yet, so tasks are saved only in this
-             browser (localStorage). Add `NEXT_PUBLIC_SUPABASE_URL` and
-             `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local` to enable real persistence + RLS.
+          <div className="mt-6 rounded-xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100 ring-1 ring-white/10">
+            <span className="font-semibold">Demo mode:</span> Supabase isn’t configured yet, so tasks are saved only in this
+            browser (localStorage). Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in
+            `.env.local` to enable real persistence + RLS.
           </div>
         ) : null}
 
         {error ? (
-          <div className="mt-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <div className="mt-6 rounded-xl border border-rose-400/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-100 ring-1 ring-white/10">
             {error}
           </div>
         ) : null}
 
-        <section className="mt-8 rounded-lg border border-zinc-200 bg-white p-4">
-          <h2 className="text-sm font-medium text-zinc-700">Create task</h2>
-          <form onSubmit={handleCreate} className="mt-3 grid gap-3">
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Title (required)"
-              className="w-full rounded-md border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-400"
-              disabled={loadingAuth || !userId}
-            />
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Description (optional)"
-              className="min-h-[72px] w-full rounded-md border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-400"
-              disabled={loadingAuth || !userId}
-            />
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="grid gap-1 text-xs text-zinc-600">
-                Priority
-                <select
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                  className="rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-400"
-                  disabled={loadingAuth || !userId}
-                >
-                  <option value="low">low</option>
-                  <option value="normal">normal</option>
-                  <option value="high">high</option>
-                </select>
-              </label>
-              <label className="grid gap-1 text-xs text-zinc-600">
-                Due date
-                <input
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-400"
-                  disabled={loadingAuth || !userId}
-                />
-              </label>
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          <section className="rounded-2xl bg-white/5 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.10)] backdrop-blur">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-semibold text-slate-100">Create task</h2>
+              <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-300 ring-1 ring-white/10">
+                Quick add
+              </span>
             </div>
-            <button
-              type="submit"
-              disabled={loadingAuth || !userId || !canSubmit}
-              className="inline-flex items-center justify-center rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {creating ? 'Creating…' : 'Add task'}
-            </button>
-          </form>
-        </section>
-
-        <section className="mt-6 rounded-lg border border-zinc-200 bg-white p-4">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-sm font-medium text-zinc-700">Your tasks</h2>
-            <button
-              type="button"
-              onClick={() => userId && loadTasks(userId)}
-              className="rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
-              disabled={loadingAuth || !userId || loadingTasks}
-            >
-              {loadingTasks ? 'Refreshing…' : 'Refresh'}
-            </button>
-          </div>
-
-          {loadingTasks ? (
-            <p className="mt-4 text-sm text-zinc-600">Loading tasks…</p>
-          ) : tasks.length === 0 ? (
-            <p className="mt-4 text-sm text-zinc-600">No tasks yet. Create one above.</p>
-          ) : (
-            <ul className="mt-4 grid gap-2">
-              {tasks.map((task) => {
-                const disabled = updatingId === task.id
-                return (
-                  <li
-                    key={task.id}
-                    className="flex items-start justify-between gap-3 rounded-md border border-zinc-200 p-3"
+            <form onSubmit={handleCreate} className="mt-4 grid gap-3">
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title (required)"
+                className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-400 outline-none ring-0 transition focus:border-cyan-400/40 focus:ring-2 focus:ring-cyan-400/20"
+                disabled={loadingAuth || !userId}
+              />
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Description (optional)"
+                className="min-h-[88px] w-full resize-none rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-indigo-400/40 focus:ring-2 focus:ring-indigo-400/20"
+                disabled={loadingAuth || !userId}
+              />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="grid gap-1 text-xs text-slate-300">
+                  Priority
+                  <select
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value as TaskPriority)}
+                    className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-fuchsia-400/40 focus:ring-2 focus:ring-fuchsia-400/20"
+                    disabled={loadingAuth || !userId}
                   >
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <p
-                          className={`truncate text-sm font-medium ${
-                            task.is_complete ? 'text-zinc-500 line-through' : 'text-zinc-900'
-                          }`}
-                        >
-                          {task.title}
-                        </p>
-                        <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">
-                          {task.priority}
-                        </span>
-                        {task.due_date ? (
-                          <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">
-                            due {task.due_date}
-                          </span>
-                        ) : null}
-                      </div>
-                      {task.description ? (
-                        <p className="mt-1 text-sm text-zinc-600">{task.description}</p>
-                      ) : null}
-                      <p className="mt-2 text-xs text-zinc-500">
-                        Created {new Date(task.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleToggleComplete(task)}
-                      disabled={disabled}
-                      className="shrink-0 rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    <option value="low">low</option>
+                    <option value="normal">normal</option>
+                    <option value="high">high</option>
+                  </select>
+                </label>
+                <label className="grid gap-1 text-xs text-slate-300">
+                  Due date
+                  <input
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-emerald-400/40 focus:ring-2 focus:ring-emerald-400/20"
+                    disabled={loadingAuth || !userId}
+                  />
+                </label>
+              </div>
+              <button
+                type="submit"
+                disabled={loadingAuth || !userId || !canSubmit}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-cyan-500/10 transition hover:from-cyan-400 hover:to-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {creating ? (
+                  <span>Creating…</span>
+                ) : (
+                  <span>Add task</span>
+                )}
+              </button>
+            </form>
+          </section>
+
+          <section className="rounded-2xl bg-white/5 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.10)] backdrop-blur">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-semibold text-slate-100">Your tasks</h2>
+              <button
+                type="button"
+                onClick={() => userId && loadTasks(userId)}
+                className="inline-flex items-center justify-center rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-slate-100 ring-1 ring-white/10 transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={loadingAuth || !userId || loadingTasks}
+              >
+                {loadingTasks ? 'Refreshing…' : 'Refresh'}
+              </button>
+            </div>
+
+            {loadingTasks ? (
+              <p className="mt-4 text-sm text-slate-300">Loading tasks…</p>
+            ) : tasks.length === 0 ? (
+              <p className="mt-4 text-sm text-slate-300">No tasks yet. Create one on the left.</p>
+            ) : (
+              <ul className="mt-4 grid gap-3">
+                {tasks.map((task) => {
+                  const disabled = updatingId === task.id
+                  return (
+                    <li
+                      key={task.id}
+                      className="group flex items-start justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/30 p-4 transition hover:border-white/15"
                     >
-                      {task.is_complete ? 'Mark incomplete' : 'Mark complete'}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-        </section>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+                          <span
+                            className={`inline-flex h-6 items-center rounded-full px-2.5 text-xs font-semibold ring-1 ring-white/10 ${
+                              task.is_complete
+                                ? 'bg-emerald-500/15 text-emerald-200'
+                                : 'bg-sky-500/15 text-sky-200'
+                            }`}
+                          >
+                            {task.is_complete ? 'DONE' : 'OPEN'}
+                          </span>
+
+                          <p
+                            className={`truncate text-sm font-semibold ${
+                              task.is_complete ? 'text-slate-400 line-through' : 'text-slate-50'
+                            }`}
+                          >
+                            {task.title}
+                          </p>
+
+                          <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-200 ring-1 ring-white/10">
+                            {task.priority}
+                          </span>
+
+                          {task.due_date ? (
+                            <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-200 ring-1 ring-white/10">
+                              due {task.due_date}
+                            </span>
+                          ) : null}
+                        </div>
+
+                        {task.description ? (
+                          <p className="mt-2 text-sm text-slate-300">{task.description}</p>
+                        ) : null}
+
+                        <p className="mt-3 text-xs text-slate-400">
+                          Created {new Date(task.created_at).toLocaleString()}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggleComplete(task)}
+                        disabled={disabled}
+                        className="shrink-0 rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-slate-100 ring-1 ring-white/10 transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {task.is_complete ? 'Mark incomplete' : 'Mark complete'}
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </section>
+        </div>
       </div>
     </div>
   )
