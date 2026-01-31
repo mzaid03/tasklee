@@ -359,12 +359,18 @@ export default function Home() {
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                    className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-fuchsia-400/40 focus:ring-2 focus:ring-fuchsia-400/20"
+                    className="appearance-none rounded-xl border border-white/10 bg-slate-900/80 px-3 py-2.5 text-sm text-white outline-none transition focus:border-fuchsia-400/40 focus:ring-2 focus:ring-fuchsia-400/20"
                     disabled={loadingAuth || !userId}
                   >
-                    <option value="low">low</option>
-                    <option value="normal">normal</option>
-                    <option value="high">high</option>
+                    <option value="low" className="bg-slate-900 text-white">
+                      low
+                    </option>
+                    <option value="normal" className="bg-slate-900 text-white">
+                      normal
+                    </option>
+                    <option value="high" className="bg-slate-900 text-white">
+                      high
+                    </option>
                   </select>
                 </label>
                 <label className="grid gap-1 text-xs text-slate-300">
