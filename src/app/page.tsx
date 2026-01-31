@@ -338,9 +338,6 @@ export default function Home() {
           <section className="rounded-2xl bg-white/5 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.10)] backdrop-blur">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-sm font-semibold text-slate-100">Create task</h2>
-              <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-300 ring-1 ring-white/10">
-                Quick add
-              </span>
             </div>
             <form onSubmit={handleCreate} className="mt-4 grid gap-3">
               <input
