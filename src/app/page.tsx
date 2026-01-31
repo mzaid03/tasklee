@@ -12,6 +12,8 @@ import {
 } from '@/lib/demoStore'
 import type { Task, TaskPriority } from '@/lib/types'
 
+const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+
 function shortId(id: string) {
   if (id.length <= 12) return id
   return `${id.slice(0, 6)}…${id.slice(-4)}`
@@ -33,6 +35,7 @@ export default function Home() {
   const [priority, setPriority] = useState<TaskPriority>('normal')
   const [dueDate, setDueDate] = useState('')
 
+
   const canSubmit = useMemo(() => title.trim().length > 0 && !creating, [title, creating])
 
   useEffect(() => {
@@ -45,15 +48,28 @@ export default function Home() {
         const client = getSupabaseClient()
 
         if (!client) {
-				// Demo mode (no Supabase configured yet)
-				const demoUserId = getOrCreateDemoGuestId()
-				if (!cancelled) {
-					setMode('demo')
-					setSupabase(null)
-					setUserId(demoUserId)
-					setTasks(loadDemoTasks(demoUserId))
-				}
-				return
+        if (IS_PRODUCTION) {
+          if (!cancelled) {
+            setMode('demo')
+            setSupabase(null)
+            setUserId(null)
+            setTasks([])
+            setError(
+              'This deployment is missing Supabase environment variables. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your hosting provider (e.g., Vercel) and redeploy.',
+            )
+          }
+          return
+        }
+
+        // Demo mode (local development only)
+        const demoUserId = getOrCreateDemoGuestId()
+        if (!cancelled) {
+          setMode('demo')
+          setSupabase(null)
+          setUserId(demoUserId)
+          setTasks(loadDemoTasks(demoUserId))
+        }
+        return
 			}
 
         if (!cancelled) {
@@ -247,7 +263,7 @@ export default function Home() {
           </div>
         </header>
 
-        {mode === 'demo' ? (
+        {mode === 'demo' && !IS_PRODUCTION ? (
           <div className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
             <strong>Demo mode:</strong> Supabase isn’t configured yet, so tasks are saved only in this
              browser (localStorage). Add `NEXT_PUBLIC_SUPABASE_URL` and
