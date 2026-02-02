@@ -313,9 +313,6 @@ export default function Home() {
               Completed:{' '}
               <span className="font-semibold text-white">{tasks.filter((t) => t.is_complete).length}</span>
             </span>
-            <span className="rounded-full bg-gradient-to-r from-cyan-500/15 to-indigo-500/15 px-3 py-1 text-xs text-cyan-100 ring-1 ring-white/10">
-              Techy UI mode
-            </span>
           </div>
         </header>
 

@@ -79,11 +79,14 @@ RLS is enabled on `public.tasks`, with policies that ensure:
 - (Optional) Users can only DELETE rows where `user_id = auth.uid()`
 
 ## 7) Tradeoffs / Improvements
-- Add edit/delete task and better task organization (filters by status, priority, due date)
-- Add pagination/infinite scroll for large lists
-- Add optimistic UI updates and offline-friendly behavior
-- Add end-to-end tests (Playwright) + CI pipeline
-- Add better accessibility polish (keyboard navigation, ARIA labels)
+
+This project intentionally prioritizes a simple architecture and a secure baseline over advanced features. The main tradeoff is keeping the UI and data model minimal (create/list/toggle) so the core requirements—guest auth, persistence, and database-enforced isolation via RLS—are clear and reliable. Another tradeoff is relying on client-side state and straightforward queries rather than introducing a richer backend (server routes, background jobs, etc.), which keeps deployment easy but leaves room for scalability and UX improvements.
+
+With more time, I would improve:
+- **Task management features:** edit task title/details, delete tasks, and add filters/sorting (status, priority, due date) and search.
+- **Scalability/performance:** pagination or infinite scroll, better indexing strategy, and optimistic UI updates with robust loading/error handling.
+- **Quality & reliability:** end-to-end tests (Playwright), CI checks on pull requests, and monitoring/logging for production issues.
+- **Accessibility & polish:** stronger keyboard navigation, clearer focus states, ARIA labels, and improved empty/error state messaging.
 
 ## 8) Security Notes
 - The frontend uses only the Supabase **anon/public** key.
